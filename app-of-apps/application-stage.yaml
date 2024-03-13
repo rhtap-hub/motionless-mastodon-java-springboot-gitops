@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: motionless-mastodon-java-springboot-stage
+  namespace: rhtap
+  finalizers: ["resources-finalizer.argocd.argoproj.io"] 
+spec:
+  project: default
+  source:
+    path: ./components/motionless-mastodon-java-springboot/overlays/stage
+    repoURL: https://github.com/rhtap-hub/motionless-mastodon-java-springboot-gitops.git
+    targetRevision: main
+  destination:
+    namespace: oc-ci-e2e-stage
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels: 
+        argocd.argoproj.io/managed-by: rhtap
+    automated: 
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true
+
